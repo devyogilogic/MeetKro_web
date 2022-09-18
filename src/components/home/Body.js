@@ -3,10 +3,11 @@ import Button from '@mui/material/Button';
 import ImageSlider from '../shared/slider/ImageSlider';
 import { useNavigate } from "react-router-dom";
 import styled, { css } from 'styled-components';
-import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel, MenuItem, Select, TextField } from '@mui/material';
+import { Alert, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import moment from 'moment';
 import { timeSlots, userMeeting } from '../../services/meetingservice';
 import { isEmpty, map } from 'lodash';
+import Snackbar from '@mui/material/Snackbar';
 
 const Body = () => {
   const navigate = useNavigate();
@@ -19,7 +20,8 @@ const Body = () => {
   const [selected_time,setTime]=useState(null)
   const [agenda_list,setAgendaList]=useState([])
   const [timeslot_list,setTimeList]=useState([])
-  const [apiresponse,setResponse]=useState([])   
+  const [apiresponse,setResponse]=useState([])  
+  const [isSnackBarOpen, setIsSnackBarOpen]=useState([])   
 
 
   useEffect(() => {
@@ -62,16 +64,17 @@ const Body = () => {
       const userdetails={"user":{"name":name,"email":email,"description":description},"booking_slot_id":selected_time} 
       const response = await userMeeting(userdetails);
       setOpenDialog(false)
+      setIsSnackBarOpen(true);
     } else {
       alert("Please enter required details schedule meeting");
     }
   }
 
   const validateFields = () => {
-    let isValidated = false;
+    let isValidated = true;
     map(['name', 'email', 'description', 'agenda', 'selected_time'], (item) => {
       if(!item || isEmpty(item)) {
-        isValidated = true;
+        isValidated = false;
       }
     });
     return isValidated;
@@ -212,6 +215,11 @@ const Body = () => {
         </DialogActions>
       </Dialog>
       }
+      <Snackbar open={isSnackBarOpen} autoHideDuration={6000} onClose={() => setIsSnackBarOpen(false)}>
+        <Alert onClose={() => setIsSnackBarOpen(false)} severity={'success'} sx={{ width: '100%' }}>
+          Successfully Scheduled your Meeting with the Admin!!
+        </Alert>
+      </Snackbar>
     </BodyContainer>
   );
 };

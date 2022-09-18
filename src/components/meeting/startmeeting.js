@@ -8,14 +8,11 @@ export default function StartMeeting() {
     useEffect(() => {
       console.log(id)
       async function startMeetingAPI(id){
-
         var response = await startMeeting(id)
-      console.log(response.data)
-       window.location.replace(response.data)
+        console.log(response.data)
+        window.location.replace(response.data)
     }
-            startMeetingAPI(id.id)
-            
-
+    startMeetingAPI(id.id)
     }, [])
     
   return (
