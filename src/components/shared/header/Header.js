@@ -26,7 +26,7 @@ const Header = () => {
 
   return (
     <HeaderContainer>
-      <h2 style={{marginLeft: '110px', marginTop: '85px', fontWeight: '400', fontSize: '40px'}}>Meet Kro</h2>
+      <h2 style={{marginLeft: '110px', marginTop: '85px', fontWeight: '400', fontSize: '40px'}}>Meet Karo</h2>
     </HeaderContainer>
   );
 };

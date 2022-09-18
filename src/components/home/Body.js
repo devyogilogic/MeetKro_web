@@ -6,6 +6,7 @@ import styled, { css } from 'styled-components';
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel, MenuItem, Select, TextField } from '@mui/material';
 import moment from 'moment';
 import { timeSlots, userMeeting } from '../../services/meetingservice';
+import { isEmpty, map } from 'lodash';
 
 const Body = () => {
   const navigate = useNavigate();
@@ -57,10 +58,23 @@ const Body = () => {
 
   const scheduleMeeting = async (event) => {
     event.preventDefault();
-    const userdetails={"user":{"name":name,"email":email,"description":description},"booking_slot_id":selected_time} 
-    const response = await userMeeting(userdetails)
-    console.log("Response is ", response)
-    setOpenDialog(false)
+    if(validateFields()) {
+      const userdetails={"user":{"name":name,"email":email,"description":description},"booking_slot_id":selected_time} 
+      const response = await userMeeting(userdetails);
+      setOpenDialog(false)
+    } else {
+      alert("Please enter required details schedule meeting");
+    }
+  }
+
+  const validateFields = () => {
+    let isValidated = false;
+    map(['name', 'email', 'description', 'agenda', 'selected_time'], (item) => {
+      if(!item || isEmpty(item)) {
+        isValidated = true;
+      }
+    });
+    return isValidated;
   }
 
   const handleChangeAgenda = (event) => {
@@ -112,6 +126,7 @@ const Body = () => {
             To subscribe to this link, please enter below details here. We
             schedule your meeting according to selected Time Slot.
           </DialogContentText>
+        <form onSubmit={scheduleMeeting}>
           <TextField
             autoFocus
             margin="dense"
@@ -122,6 +137,7 @@ const Body = () => {
             variant="standard"
             onChange={onEmailChange}
             value={email}
+            required
           />
           <TextField
             autoFocus
@@ -133,6 +149,7 @@ const Body = () => {
             variant="standard"
             onChange={onNameChange}
             value={name}
+            required
           />
           <TextField
             autoFocus
@@ -144,6 +161,7 @@ const Body = () => {
             variant="standard"
             onChange={onDescriptionChange}
             value={description}
+            required
           />
           <InputLabel id="demo-simple-select-label">Select Agenda</InputLabel>
           <Select
@@ -153,6 +171,7 @@ const Body = () => {
             label="Category"
             fullWidth
             onChange={handleChangeAgenda}
+            required
           >
             { agenda_list.map((val)=>{
               return <MenuItem
@@ -173,6 +192,7 @@ const Body = () => {
             value={selected_time}
             label="Category"
             onChange={handleChangeTime}
+            required
           >
 
           {timeslot_list.map((val) => {
@@ -183,8 +203,8 @@ const Body = () => {
                     </MenuItem> 
           })}
   
-  </Select>
-
+          </Select>
+        </form>
         </DialogContent>
         <DialogActions>
           <Button variant='contained' style={{backgroundColor: 'red'}} onClick={() => setOpenDialog(false)}>Cancel</Button>
